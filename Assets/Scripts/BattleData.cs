@@ -1,28 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace HackathonA{
-    public readonly struct BattleData{
-    //playerのHP
-    public int playerHp;
-    
-    //敵のHP
-    public int enemyHp;
+namespace HackathonA
+{
+    public readonly struct BattleData
+    {
+        //playerのHP
+        public readonly int playerHp;
 
-    //playerの行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
-    public int playerAction;
+        //敵のHP
+        public readonly int enemyHp;
 
-    //敵の行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
-    public int enemyAction;
+        //playerの行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
+        public readonly int playerAction;
 
-    //playerのダメージ
-    public int playerDamageValue;
+        //敵の行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
+        public readonly int enemyAction;
 
-    //敵のダメージ
-    public int enemyDamageValue;
+        //playerのダメージ
+        public readonly int playerDamageValue;
 
-    //終了判定
-    public bool actionJudge;
+        //敵のダメージ
+        public readonly int enemyDamageValue;
+
+        //終了判定（TrueがPlayer先行、Falseが敵先行）
+        public readonly bool actionJudge;
     }
 }
 

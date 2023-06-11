@@ -25,6 +25,18 @@ namespace HackathonA
 
         //終了判定（TrueがPlayer先行、Falseが敵先行）
         public readonly bool actionJudge;
+
+        public BattleData(int _playerHp,int _enemyHp, int _playerAction, int _enemyAction, int _playerDamageValue, int _enemyDamageValue, bool _actionJudge)
+        {
+            this.playerHp = _playerHp;
+            this.enemyHp = _enemyHp;
+            this.playerAction = _playerAction;
+            this.enemyAction = _enemyAction;
+            this.playerDamageValue = _playerDamageValue;
+            this.enemyDamageValue = _enemyDamageValue;
+            this.actionJudge = _actionJudge;
+
+        }
     }
 }
 

@@ -23,7 +23,7 @@ namespace HackathonA
         //敵のダメージ
         public readonly int enemyDamageValue;
 
-        //終了判定
+        //終了判定（TrueがPlayer先行、Falseが敵先行）
         public readonly bool actionJudge;
     }
 }

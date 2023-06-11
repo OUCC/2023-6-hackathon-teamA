@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace HackathonA
 {
-    public readonly struct BattleData
+    public class BattleData
     {
         //playerのHP
         public readonly int playerHp;

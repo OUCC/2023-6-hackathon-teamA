@@ -13,9 +13,8 @@ namespace HackathonA
             int enemyAction = 0;
 
             //playerと敵のダメージ計算
-            BattleSystem battleSystem = new BattleSystem();
-            int playerDamageValue = battleSystem.Damage(playerAction);
-            int enemyDamageValue = battleSystem.Damage(enemyAction);
+            int playerDamageValue = BattleSystem.Damage(playerAction);
+            int enemyDamageValue = BattleSystem.Damage(enemyAction);
             switch (playerAction)
             {
                 case 0:
@@ -65,24 +64,12 @@ namespace HackathonA
             }
 
             //HP計算
-            playerHp = playerHp - enemyDamageValue;
-            enemyHp = enemyHp - playerDamageValue;
+            playerHp = BattleSystem.HpCalculate(playerHp, playerAction, playerDamageValue);
+            enemyHp = BattleSystem.HpCalculate(enemyHp, enemyAction, enemyDamageValue);
 
-            //終了判定
-            bool actionJudge;
-            if (playerHp == 0 && enemyHp == 0)
-            {
-                actionJudge = true;
-
-            }
-            else if (playerHp == 0)
-            {
-                actionJudge = true;
-            }
-            else if (enemyHp == 0)
-            {
-                actionJudge = false;
-            }
+            //勝敗判定
+            bool actionJudge = true;
+            actionJudge = BattleSystem.BattleJudge(playerHp, enemyHp);
 
             //BattleDataに再度入力
 
@@ -90,33 +77,71 @@ namespace HackathonA
 
         }
 
+        //HP計算
+        private static int HpCalculate(int hp, int action, int damageValue)
+        {
+            int _hp = hp;
+            int _damageValue = damageValue;
 
+            //回復だけ区別
+            if (action == 2)
+            {
+                _hp = _hp + _damageValue;
+            }
+            else
+            {
+                _hp = _hp - _damageValue;
+            }
 
+            return _hp;
+        }
 
+        //勝敗判定
+        private static bool BattleJudge(int playerhp, int enemyhp)
+        {
+            int _playerhp = playerhp;
+            int _enemyhp = enemyhp;
+            bool judge = true;
 
+            if (_playerhp == 0 && _enemyhp == 0)
+            {
+                judge = true;
+
+            }
+            else if (_playerhp == 0)
+            {
+                judge = true;
+            }
+            else if (_enemyhp == 0)
+            {
+                judge = false;
+            }
+            
+            return judge;
+        }
 
         //両者共通のダメージ計算
-        private int Damage(int action)
+        private static int Damage(int action)
         {
             var rand = new Random();
             int value = 0;
             switch (action)
             {
                 case 0:
-                    value = -rand.Next(20, 30);
+                    value = rand.Next(20, 30);
                     break;
                 case 1:
-                    value = -rand.Next(20, 30);
+                    value = rand.Next(20, 30);
                     break;
                 case 2:
                     value = rand.Next(10, 15);
                     break;
                 case 3:
-                    value = -rand.Next(20, 30);
+                    value = rand.Next(20, 30);
 
                     break;
                 case 4:
-                    value = -rand.Next(20, 30);
+                    value = rand.Next(20, 30);
                     break;
             }
             return value;

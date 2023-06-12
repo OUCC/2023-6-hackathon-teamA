@@ -1,10 +1,9 @@
-﻿namespace HackathonA
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+namespace HackathonA
 {
-
-    using System.Collections;
-    using System.Collections.Generic;
-    using UnityEngine;
-
     public class BattleManager : MonoBehaviour
     {
         const int attacking = 0;
@@ -24,9 +23,9 @@
          actionText
          ・攻撃時、ダメージのテキストを返す。
              */
-        public string actionText(int action)
+        public string ActionText(int action)
         {
-            battleData = battleSystem.getBattleData(action);
+            battleData = battleSystem.GetBattleData(action);
             string message = "";
             var charactorList = new List<string>();
             if (battleData.actionJudge)
@@ -46,37 +45,36 @@
                 switch (action)
                 {
                     case attacking:
-                        message += actor + "の攻撃!\n";
-                        message += target + "は" + battleData.damageValue[actor] + "のダメージを受けた";
+                        message += $"{actor}の攻撃!\n";
+                        message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
                         break;
                     case magicAttacking:
-                        message += actor + "の魔法攻撃!\n";
-                        message += target + "は" + battleData.damageValue[actor] + "のダメージを受けた";
+                        message += $"{actor}の魔法攻撃!\n";
+                        message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
                         break;
                     case healing:
-                        message += actor + "は" + battleData.damageValue[actor] + "回復した";
+                        message += $"{actor}は{battleData.damageValue[actor]}回復した";
                         break;
                     case counter:
+                        message += $"{actor}のカウンター攻撃!\n";
                         if (battleData.counterJudge[actor])
                         {
-                            message += actor + "のカウンター攻撃!\n";
-                            message += target + "は" + battleData.damageValue[actor] + "のダメージを受けた";
+                            
+                            message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
                         }
                         else
                         {
-                            message += actor + "のカウンター攻撃!\n";
                             message += "しかし失敗に終わった。";
                         }
                         break;
                     case magicCounter:
+                        message += $"{actor}の魔法カウンター攻撃!\n";
                         if (battleData.counterJudge[actor])
                         {
-                            message += actor + "の魔法カウンター攻撃!\n";
-                            message += target + "は" + battleData.damageValue[actor] + "のダメージを受けた";
+                            message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
                         }
                         else
                         {
-                            message += actor + "の魔法カウンター攻撃!\n";
                             message += "しかし失敗に終わった。";
                         }
                         break;

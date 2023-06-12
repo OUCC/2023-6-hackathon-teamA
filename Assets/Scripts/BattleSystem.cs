@@ -11,70 +11,93 @@ namespace HackathonA
             int enemyHp = 100;
             int playerAction = 0;
             int enemyAction = 0;
+            //勝敗判定
+            bool actionJudge = true;
+            //カウンターの成功判定
+            bool playerCounterJudge = true;
+            bool enemyCounterJudge = true;
 
             //playerと敵のダメージ計算
             int playerDamageValue = BattleSystem.Damage(playerAction);
             int enemyDamageValue = BattleSystem.Damage(enemyAction);
-            switch (playerAction)
+
+
+            //カウンターの処理
+            if (playerAction == 3 || playerAction == 4)
             {
-                case 0:
-                    if (enemyAction == 3)
-                    {
-                        enemyDamageValue = playerDamageValue;
-                        playerDamageValue = 0;
-                    }
-                    else
-                    {
-                        enemyDamageValue = 0;
-                    }
-                    break;
-                case 1:
-                    if (enemyAction == 4)
-                    {
-                        enemyDamageValue = playerDamageValue;
-                        playerDamageValue = 0;
-                    }
-                    else
-                    {
-                        enemyDamageValue = 0;
-                    }
-                    break;
-                case 3:
-                    if (enemyAction == 0)
-                    {
-                        playerDamageValue = enemyDamageValue;
-                        enemyDamageValue = 0;
-                    }
-                    else
-                    {
-                        playerDamageValue = 0;
-                    }
-                    break;
-                case 4:
-                    if (enemyAction == 1)
-                    {
-                        playerDamageValue = enemyDamageValue;
-                        enemyDamageValue = 0;
-                    }
-                    else
-                    {
-                        playerDamageValue = 0;
-                    }
-                    break;
+                playerCounterJudge = BattleSystem.CounterJudge(playerAction, enemyAction, playerCounterJudge);
+                if (playerCounterJudge == true)
+                {
+                    playerDamageValue = enemyDamageValue;
+                    enemyDamageValue = 0;
+
+                }
+                else if (playerCounterJudge == false)
+                {
+                    playerDamageValue = 0;
+                }
+
             }
+            else if (enemyAction == 3 || enemyAction == 4)
+            {
+                enemyCounterJudge = BattleSystem.CounterJudge(enemyAction, playerAction, enemyCounterJudge);
+                if (enemyCounterJudge == true)
+                {
+                    enemyDamageValue = playerDamageValue;
+                    playerDamageValue = 0;
+
+                }
+                else if (enemyCounterJudge == false)
+                {
+                    enemyDamageValue = 0;
+                }
+            }
+
 
             //HP計算
             playerHp = BattleSystem.HpCalculate(playerHp, playerAction, playerDamageValue);
             enemyHp = BattleSystem.HpCalculate(enemyHp, enemyAction, enemyDamageValue);
 
             //勝敗判定
-            bool actionJudge = true;
             actionJudge = BattleSystem.BattleJudge(playerHp, enemyHp);
 
             //BattleDataに再度入力
 
 
 
+        }
+
+        //カウンターの成功判定（成功がTrue、失敗がFalse）
+        private static bool CounterJudge(int activeAction, int passiveAction, bool counterJudge)
+        {
+            int _activeAction = activeAction;
+            int _passiveAction = passiveAction;
+            bool _counterJudge = counterJudge;
+            if (_activeAction == 3)
+            {
+                if (_passiveAction == 0)
+                {
+                    _counterJudge = true;
+                }
+                else
+                {
+                    _counterJudge = false;
+                }
+            }
+
+            else if (_activeAction == 4)
+            {
+                if (_passiveAction == 1)
+                {
+                    _counterJudge = true;
+                }
+                else
+                {
+                    _counterJudge = false;
+                }
+            }
+
+            return _counterJudge;
         }
 
         //HP計算
@@ -103,20 +126,20 @@ namespace HackathonA
             int _enemyhp = enemyhp;
             bool judge = true;
 
-            if (_playerhp == 0 && _enemyhp == 0)
+            if (_playerhp <= 0 && _enemyhp <= 0)
             {
                 judge = true;
 
             }
-            else if (_playerhp == 0)
+            else if (_playerhp <= 0)
             {
                 judge = true;
             }
-            else if (_enemyhp == 0)
+            else if (_enemyhp <= 0)
             {
                 judge = false;
             }
-            
+
             return judge;
         }
 

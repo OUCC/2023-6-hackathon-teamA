@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TMPro;
 using UniRx;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -36,7 +37,7 @@ namespace HackathonA
         void Start()
         {
             battleManager = new ();
-            battleManager.MessageChanged.Subscribe(messages => MessageChangedAsync(messages.Item1, messages.Item2));
+            battleManager.MessageChanged.Subscribe(messages => MessageChangedAsync(messages.Item1, messages.Item2).Forget());
             battleManager.PlayerHPChanged.Subscribe(playerHP => playerHPText.SetText($"HP：{playerHP}"));
             battleManager.EnemyHPChanged.Subscribe(enemyHP => enemyHPText.SetText($"HP：{enemyHP}"));
             physicalButton.onClick.AddListener(() => ButtonCliled(0));
@@ -62,13 +63,13 @@ namespace HackathonA
             battleManager.TestInvoke(message);
         }
 
-        private async void MessageChangedAsync(string message, bool isEndMessage)
+        private async UniTaskVoid MessageChangedAsync(string message, bool isEndMessage)
         {
             messageText.gameObject.SetActive(true);
             messageText.SetText(message);
             if (isEndMessage)
             {
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await UniTask.Delay(TimeSpan.FromSeconds(5));
                 messageText.gameObject.SetActive(false);
                 buttonGroup.gameObject.SetActive(true);
             }

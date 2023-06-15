@@ -161,6 +161,7 @@ MonoBehaviour:
   physicalCounterButton: {fileID: 820629344}
   magicCounterCounterButton: {fileID: 958546955}
   enemyImage: {fileID: 1673551403}
+  buttonGroup: {fileID: 877563750}
 --- !u!224 &41784759
 RectTransform:
   m_ObjectHideFlags: 0
@@ -473,8 +474,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -360, y: 90}
-  m_SizeDelta: {x: 400, y: 340}
+  m_AnchoredPosition: {x: 0, y: -175}
+  m_SizeDelta: {x: 1120, y: 170.5998}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &425722338
 MonoBehaviour:
@@ -1000,7 +1001,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -407, y: -110}
+  m_AnchoredPosition: {x: -407, y: -50}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &641428180

@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Threading;
-using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UniRx;
-using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -31,13 +30,26 @@ namespace HackathonA
         private Image enemyImage;
         [SerializeField]
         private HorizontalLayoutGroup buttonGroup;
-        private BattleManagerFake battleManager;
+        [SerializeField]
+        private GameObject scrollView;
+        private BattleManagerFake battleManager; 
+        private CancellationTokenSource cancellationTokenSource = new();
 
         // Start is called before the first frame update
         void Start()
         {
             battleManager = new ();
-            battleManager.MessageChanged.Subscribe(messages => MessageChangedAsync(messages.Item1, messages.Item2).Forget());
+            battleManager.MessageChanged.Subscribe(async messages => {
+                try
+                {
+                    await MessageChangedAsync(messages.Item1, messages.Item2, cancellationTokenSource.Token);
+                }
+                catch (OperationCanceledException)
+                {
+                    cancellationTokenSource.Dispose();
+                    cancellationTokenSource = new();
+                }
+            });
             battleManager.PlayerHPChanged.Subscribe(playerHP => playerHPText.SetText($"HP：{playerHP}"));
             battleManager.EnemyHPChanged.Subscribe(enemyHP => enemyHPText.SetText($"HP：{enemyHP}"));
             physicalButton.onClick.AddListener(() => ButtonCliled(0));
@@ -45,7 +57,12 @@ namespace HackathonA
             recoverButton.onClick.AddListener(() => ButtonCliled(2));
             physicalCounterButton.onClick.AddListener(() => ButtonCliled(3));
             magicCounterCounterButton.onClick.AddListener(()=>ButtonCliled(4));
-            messageText.gameObject.SetActive(false);
+            scrollView.SetActive(false);
+        }
+
+        private void OnDestroy()
+        {
+            cancellationTokenSource.Dispose();
         }
 
         private void ButtonCliled(int playerAction)
@@ -53,7 +70,7 @@ namespace HackathonA
             buttonGroup.gameObject.SetActive(false);
             var message = playerAction switch
             {
-                0 => "物理攻撃",
+                0 => "物理攻撃\n物理攻撃\n物理攻撃\n物理攻撃\n",
                 1 => "魔法攻撃",
                 2 => "回復",
                 3 => "物理カウンター",
@@ -63,15 +80,21 @@ namespace HackathonA
             battleManager.TestInvoke(message);
         }
 
-        private async UniTaskVoid MessageChangedAsync(string message, bool isEndMessage)
+        private async UniTask MessageChangedAsync(string message, bool isEndMessage, CancellationToken cancellation)
         {
-            messageText.gameObject.SetActive(true);
+            scrollView.SetActive(true);
             messageText.SetText(message);
             if (isEndMessage)
             {
-                await UniTask.Delay(TimeSpan.FromSeconds(5));
-                messageText.gameObject.SetActive(false);
-                buttonGroup.gameObject.SetActive(true);
+                try
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellation);
+                }
+                finally
+                {
+                    scrollView.SetActive(false);
+                    buttonGroup.gameObject.SetActive(true);
+                }
             }
         }
     }

@@ -4,101 +4,164 @@ namespace HackathonA
 
     public class BattleSystem
     {
-        void Main()
+        //カウンターの成功判定（成功が1、失敗が0）
+        private static (int playerCounterJudge, int enemyCounterJudge) CounterJudge(int playerAction, int enemyAction)
         {
-            //BattleManager,ChatGPTから取得
-            int playerHp = 100;
-            int enemyHp = 100;
-            int playerAction = 0;
-            int enemyAction = 0;
-            //勝敗判定
-            bool actionJudge = true;
-            //カウンターの成功判定
-            bool playerCounterJudge = true;
-            bool enemyCounterJudge = true;
+            int _playerAction = playerAction;
+            int _enemyAction = enemyAction;
+            int playerCounterJudge = 0;
+            int enemyCounterJudge = 0;
 
-            //playerと敵のダメージ計算
-            int playerDamageValue = BattleSystem.Damage(playerAction);
-            int enemyDamageValue = BattleSystem.Damage(enemyAction);
+            //player側の判定
+            if (_playerAction == 3)
+            {
+                switch (_enemyAction)
+                {
+                    case 0:
+                        playerCounterJudge = 1;
+                        break;
+                    case 1:
+                        playerCounterJudge = 0;
+                        break;
+                    case 2:
+                        playerCounterJudge = 0;
+                        break;
+                    case 3:
+                        playerCounterJudge = 0;
+                        break;
+                    case 5:
+                        playerCounterJudge = 0;
+                        break;
+                }
+            }
+            else if (_playerAction == 4)
+            {
+                switch (_enemyAction)
+                {
+                    case 0:
+                        playerCounterJudge = 0;
+                        break;
+                    case 1:
+                        playerCounterJudge = 1;
+                        break;
+                    case 2:
+                        playerCounterJudge = 0;
+                        break;
+                    case 3:
+                        playerCounterJudge = 0;
+                        break;
+                    case 5:
+                        playerCounterJudge = 0;
+                        break;
+                }
+            }
+
+            //enemy側の判定
+            else if (_enemyAction == 3)
+            {
+                switch (_playerAction)
+                {
+                    case 0:
+                        enemyCounterJudge = 1;
+                        break;
+                    case 1:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 2:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 3:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 5:
+                        enemyCounterJudge = 0;
+                        break;
+                }
+            }
+            else if (_enemyAction == 4)
+            {
+                switch (_playerAction)
+                {
+                    case 0:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 1:
+                        enemyCounterJudge = 1;
+                        break;
+                    case 2:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 3:
+                        enemyCounterJudge = 0;
+                        break;
+                    case 5:
+                        enemyCounterJudge = 0;
+                        break;
+                }
+            }
+            return (playerCounterJudge, enemyCounterJudge);
+        }
+
+        //ダメージ計算
+        private static (int playerDamageValue, int enemyDamageValue) Damage(int playerAction, int enemyAction)
+        {
+            int playerDamageValue = 0;
+            int enemyDamageValue = 0;
+            (int playerCounterJudge, int enemyCounterJudge) = BattleSystem.CounterJudge(playerAction, enemyAction);
+
+            var rand = new Random();
+            switch (playerAction)
+            {
+                case 0:
+                    playerDamageValue = rand.Next(20, 30);
+                    break;
+                case 1:
+                    playerDamageValue = rand.Next(20, 30);
+                    break;
+                case 2:
+                    playerDamageValue = rand.Next(10, 15);
+                    break;
+            }
+            switch (enemyAction)
+            {
+                case 0:
+                    enemyDamageValue = rand.Next(20, 30);
+                    break;
+                case 1:
+                    enemyDamageValue = rand.Next(20, 30);
+                    break;
+                case 2:
+                    enemyDamageValue = rand.Next(10, 15);
+                    break;
+            }
 
 
             //カウンターの処理
-            if (playerAction == 3 || playerAction == 4)
+            switch (playerCounterJudge)
             {
-                playerCounterJudge = BattleSystem.CounterJudge(playerAction, enemyAction, playerCounterJudge);
-                if (playerCounterJudge == true)
-                {
+                case 0:
+                    playerAction = 0;
+                    break;
+
+                case 1:
                     playerDamageValue = enemyDamageValue;
                     enemyDamageValue = 0;
-
-                }
-                else if (playerCounterJudge == false)
-                {
-                    playerDamageValue = 0;
-                }
-
+                    break;
             }
-            else if (enemyAction == 3 || enemyAction == 4)
+            switch (enemyCounterJudge)
             {
-                enemyCounterJudge = BattleSystem.CounterJudge(enemyAction, playerAction, enemyCounterJudge);
-                if (enemyCounterJudge == true)
-                {
+                case 0:
+                    enemyDamageValue = 0;
+                    break;
+
+                case 1:
                     enemyDamageValue = playerDamageValue;
                     playerDamageValue = 0;
-
-                }
-                else if (enemyCounterJudge == false)
-                {
-                    enemyDamageValue = 0;
-                }
+                    break;
             }
-
-
-            //HP計算
-            playerHp = BattleSystem.HpCalculate(playerHp, playerAction, playerDamageValue);
-            enemyHp = BattleSystem.HpCalculate(enemyHp, enemyAction, enemyDamageValue);
-
-            //勝敗判定
-            actionJudge = BattleSystem.BattleJudge(playerHp, enemyHp);
-
-            //BattleDataに再度入力
-
-
-
+            return (playerDamageValue, enemyDamageValue);
         }
 
-        //カウンターの成功判定（成功がTrue、失敗がFalse）
-        private static bool CounterJudge(int activeAction, int passiveAction, bool counterJudge)
-        {
-            int _activeAction = activeAction;
-            int _passiveAction = passiveAction;
-            bool _counterJudge = counterJudge;
-            if (_activeAction == 3)
-            {
-                if (_passiveAction == 0)
-                {
-                    _counterJudge = true;
-                }
-                else
-                {
-                    _counterJudge = false;
-                }
-            }
-
-            else if (_activeAction == 4)
-            {
-                if (_passiveAction == 1)
-                {
-                    _counterJudge = true;
-                }
-                else
-                {
-                    _counterJudge = false;
-                }
-            }
-
-            return _counterJudge;
-        }
 
         //HP計算
         private static int HpCalculate(int hp, int action, int damageValue)
@@ -119,61 +182,29 @@ namespace HackathonA
             return _hp;
         }
 
-        //勝敗判定
-        private static bool BattleJudge(int playerhp, int enemyhp)
+        //勝敗判定（１：player勝利、０：継戦、ー１：enemy勝利）
+        private static int BattleJudge(int playerHp, int enemyHp)
         {
-            int _playerhp = playerhp;
-            int _enemyhp = enemyhp;
-            bool judge = true;
+            int _playerhp = playerHp;
+            int _enemyhp = enemyHp;
+            int judge = 0;
 
             if (_playerhp <= 0 && _enemyhp <= 0)
             {
-                judge = true;
+                judge = 1;
 
             }
             else if (_playerhp <= 0)
             {
-                judge = true;
+                judge = -1;
             }
             else if (_enemyhp <= 0)
             {
-                judge = false;
+                judge = 1;
             }
 
             return judge;
         }
 
-        //両者共通のダメージ計算
-        private static int Damage(int action)
-        {
-            var rand = new Random();
-            int value = 0;
-            switch (action)
-            {
-                case 0:
-                    value = rand.Next(20, 30);
-                    break;
-                case 1:
-                    value = rand.Next(20, 30);
-                    break;
-                case 2:
-                    value = rand.Next(10, 15);
-                    break;
-                case 3:
-                    value = rand.Next(20, 30);
-
-                    break;
-                case 4:
-                    value = rand.Next(20, 30);
-                    break;
-            }
-            return value;
-        }
-
-
-
-
-
     }
 }
-

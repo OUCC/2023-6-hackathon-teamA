@@ -5,36 +5,25 @@ namespace HackathonA
 {
     public class BattleData
     {
-        //playerのHP
-        public readonly int playerHp;
+        //HP
+        public readonly int hp;
 
-        //敵のHP
-        public readonly int enemyHp;
+        //行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
+        public readonly int action;
 
-        //playerの行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
-        public readonly int playerAction;
+        //ダメージ
+        public readonly int damageValue;
 
-        //敵の行動（０：物理攻撃、１：魔法攻撃、２：回復、３：物理カウンター、４：魔法カウンター）
-        public readonly int enemyAction;
+        //カウンター成功判定（成功：１、失敗：０）
 
-        //playerのダメージ
-        public readonly int playerDamageValue;
+        public readonly int counterJudge;
 
-        //敵のダメージ
-        public readonly int enemyDamageValue;
-
-        //終了判定（TrueがPlayer先行、Falseが敵先行）
-        public readonly bool actionJudge;
-
-        public BattleData(int _playerHp,int _enemyHp, int _playerAction, int _enemyAction, int _playerDamageValue, int _enemyDamageValue, bool _actionJudge)
+        public BattleData(int _hp,int _action,int _damageValue, int _counterJudge)
         {
-            this.playerHp = _playerHp;
-            this.enemyHp = _enemyHp;
-            this.playerAction = _playerAction;
-            this.enemyAction = _enemyAction;
-            this.playerDamageValue = _playerDamageValue;
-            this.enemyDamageValue = _enemyDamageValue;
-            this.actionJudge = _actionJudge;
+            this.hp = _hp;
+            this.action = _action;
+            this.damageValue = _damageValue;
+            this.counterJudge = _counterJudge;
 
         }
     }

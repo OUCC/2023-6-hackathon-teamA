@@ -20,8 +20,9 @@ namespace HackathonA
         }
 
         /*
-         actionText
-         ・攻撃時、ダメージのテキストを返す。
+         StateUpdateAsync
+         引数: プレイヤーの行動
+         返り値: (文章・プレイヤーのHP・敵のHP)の順のタプル
              */
         public async (string, int, int) StateUpdateAsync(int playerAction)
         {

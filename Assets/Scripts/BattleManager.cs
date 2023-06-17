@@ -12,7 +12,9 @@ namespace HackathonA
         const int counter = 3;
         const int magicCounter = 4;
         private BattleSystem battleSystem;
-        private BattleData battleData;
+        private Player playerData;
+        private Enemy enemyData;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -23,66 +25,101 @@ namespace HackathonA
          actionText
          ・攻撃時、ダメージのテキストを返す。
              */
-        public string ActionText(int action)
+        public void StateUpdate(int action)
         {
-            battleData = battleSystem.GetBattleData(action);
-            string message = "";
+            BattleData battleData = battleSystem.GetBattleData(action);
+            playerData = battleData.player;
+            enemyData = battleData.enemy;
+        }
+        public string GetText()
+        {
+            string sendMessage = "";
             var charactorList = new List<string>();
             if (battleData.actionJudge)
             {
-                charactorList.Add("Player");
-                charactorList.Add("Enemy");
+                sendMessage += GenerateMessage(playerData);
+                sendMessage += GenerateMessage(enemyData);
             }
             else
             {
-                charactorList.Add("Enemy");
-                charactorList.Add("Player");
+                sendMessage += GenerateMessage(enemyData);
+                sendMessage += GenerateMessage(playerData);
             }
-            for (int i = 0; i < 2; i++)
+            return sendMessage;
+            
+        }
+        public int GetHp(string charactorName)
+        {
+            int hp;
+            switch (charactorName)
             {
-                string actor = charactorList[i];
-                string target = charactorList[i ^ 1];
-                switch (action)
-                {
-                    case attacking:
-                        message += $"{actor}の攻撃!\n";
-                        message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
-                        break;
-                    case magicAttacking:
-                        message += $"{actor}の魔法攻撃!\n";
-                        message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
-                        break;
-                    case healing:
-                        message += $"{actor}は{battleData.damageValue[actor]}回復した";
-                        break;
-                    case counter:
-                        message += $"{actor}のカウンター攻撃!\n";
-                        if (battleData.counterJudge[actor])
-                        {
-                            
-                            message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
-                        }
-                        else
-                        {
-                            message += "しかし失敗に終わった。";
-                        }
-                        break;
-                    case magicCounter:
-                        message += $"{actor}の魔法カウンター攻撃!\n";
-                        if (battleData.counterJudge[actor])
-                        {
-                            message += $"{target}は{battleData.damageValue[actor]}のダメージを受けた";
-                        }
-                        else
-                        {
-                            message += "しかし失敗に終わった。";
-                        }
-                        break;
-                }
-                if (i == 1)
-                {
-                    message += "\n";
-                }
+                case "Player":
+                    hp = playerData.HP;
+                    break;
+                case "Enemy":
+                    hp = enemyData.HP;
+                    break;
+                default:
+                    hp = -1;
+                    break;
+            }
+            return hp;
+        }
+        private string GenerateMessage(ICharactor charactor)
+        {
+            string message = "";
+            string actor, target;
+            if (charactor.GetType() == "Player")
+            {
+                actor = "Player";
+                target = "Enemy";
+            }
+            else
+            {
+                actor = "Enemy";
+                target = "Player";
+            }
+            int damageValue = charactor.DamageValue;
+            bool counterJudge = charactor.CounterJudge;
+            switch (charactor.ActionType)
+            {
+                case attacking:
+                    message += $"{actor}の攻撃!\n";
+                    message += $"{target}は{damageValue}のダメージを受けた";
+                    break;
+                case magicAttacking:
+                    message += $"{actor}の魔法攻撃!\n";
+                    message += $"{target}は{damageValue}のダメージを受けた";
+                    break;
+                case healing:
+                    message += $"{actor}は{damageValue}回復した";
+                    break;
+                case counter:
+                    message += $"{actor}のカウンター攻撃!\n";
+                    if (counterJudge)
+                    {
+
+                        message += $"{target}は{damageValue}のダメージを受けた";
+                    }
+                    else
+                    {
+                        message += "しかし失敗に終わった。";
+                    }
+                    break;
+                case magicCounter:
+                    message += $"{actor}の魔法カウンター攻撃!\n";
+                    if (counterJudge)
+                    {
+                        message += $"{target}は{damageValue}のダメージを受けた";
+                    }
+                    else
+                    {
+                        message += "しかし失敗に終わった。";
+                    }
+                    break;
+                default:
+                    message += "行動値が不正です";
+                    break;
             }
             return message;
         }

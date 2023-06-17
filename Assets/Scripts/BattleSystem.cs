@@ -2,16 +2,14 @@ using System;
 
 namespace HackathonA
 {
-
     public class BattleSystem
     {
-        public void Main(int playerAction)
+        public async BattleData BattleProcessAsync(int playerAction)
         {
             Player player = new Player();
             Enemy enemy = new Enemy();
 
             player.ActionType = playerAction;
-
             //ChatGPTから取得
             enemy.ActionType = 0;
 
@@ -21,11 +19,10 @@ namespace HackathonA
             enemy.Hp = HpCalculate(enemy.Hp, enemy.ActionType, enemy.DamageValue);
 
 
-            int battleJudge = BattleJudge(player.Hp,enemy.Hp);
+            int battleJudge = BattleJudge(player.Hp, enemy.Hp);
             bool moveJudge = MoveJudge(player.CounterJudge);
-            BattleData battle = new BattleData(battleJudge,moveJudge);
+            return new BattleData(battleJudge, moveJudge, player, enemy);
         }
-
 
         //カウンターの成功判定（成功が1、失敗が0）
         private (bool playerCounterJudge, bool enemyCounterJudge) CounterJudge(int playerAction, int enemyAction)
@@ -124,7 +121,7 @@ namespace HackathonA
         }
 
         //ダメージ計算
-        private (int playerDamageValue, int enemyDamageValue,bool playerCounterJudge,bool enemyCounterJudge) Damage(int playerAction, int enemyAction)
+        private (int playerDamageValue, int enemyDamageValue, bool playerCounterJudge, bool enemyCounterJudge) Damage(int playerAction, int enemyAction)
         {
             int playerDamageValue = 0;
             int enemyDamageValue = 0;
@@ -183,7 +180,6 @@ namespace HackathonA
             return (playerDamageValue, enemyDamageValue, playerCounterJudge, enemyCounterJudge);
         }
 
-
         //HP計算
         private int HpCalculate(int hp, int action, int damageValue)
         {
@@ -200,43 +196,47 @@ namespace HackathonA
                 _hp = _hp - _damageValue;
             }
 
+            if (_hp <= 0)
+            {
+                _hp = 0;
+            }
+
             return _hp;
         }
 
         //勝敗判定（１：player勝利、０：継戦、ー１：enemy勝利）
         private int BattleJudge(int playerHp, int enemyHp)
         {
-            int _playerhp = playerHp;
-            int _enemyhp = enemyHp;
-            int judge = 0;
 
-            if (_playerhp <= 0 && _enemyhp <= 0)
+            if (playerHp == 0 && enemyHp == 0)
             {
-                judge = 1;
-
+                return 1;
             }
-            else if (_playerhp <= 0)
+            else if (playerHp == 0)
             {
-                judge = -1;
+                return -1;
             }
-            else if (_enemyhp <= 0)
+            else if (enemyHp == 0)
             {
-                judge = 1;
+                return 1;
             }
-
-            return judge;
+            else
+            {
+                return 0;
+            }
         }
+
+        //先行判定
         private bool MoveJudge(bool counterJudge)
         {
-            bool moveJudge = true;
             if (counterJudge == true)
             {
-                moveJudge = false;
+                return false;
             }
-
-            return moveJudge;
-
+            else
+            {
+                return true;
+            }
         }
-
     }
 }

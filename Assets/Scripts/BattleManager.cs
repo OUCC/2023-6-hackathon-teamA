@@ -25,7 +25,7 @@ namespace HackathonA
              */
         public async (string, int, int) StateUpdateAsync(int playerAction)
         {
-            BattleData battleData = await battleSystem.BattleProcessAsync(action);
+            BattleData battleData = await battleSystem.BattleProcessAsync(playerAction);
 
             int playerHp = battleData.Player.HP;
             int enemyHp = battleData.Enemy.HP;

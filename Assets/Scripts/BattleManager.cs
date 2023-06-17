@@ -23,9 +23,9 @@ namespace HackathonA
          actionText
          ・攻撃時、ダメージのテキストを返す。
              */
-        public (string, int, int) StateUpdate(int action)
+        public async (string, int, int) StateUpdateAsync(int action)
         {
-            BattleData battleData = battleSystem.BattleProcess(action);
+            BattleData battleData = await battleSystem.BattleProcessAsync(action);
 
             int playerHp = battleSystem.Player.HP;
             int enemyHp = battleSystem.Enemy.HP;

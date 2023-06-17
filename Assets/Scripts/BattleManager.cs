@@ -23,31 +23,31 @@ namespace HackathonA
          actionText
          ・攻撃時、ダメージのテキストを返す。
              */
-        public async (string, int, int) StateUpdateAsync(int action)
+        public async (string, int, int) StateUpdateAsync(int playerAction)
         {
             BattleData battleData = await battleSystem.BattleProcessAsync(action);
 
-            int playerHp = battleSystem.Player.HP;
-            int enemyHp = battleSystem.Enemy.HP;
+            int playerHp = battleData.Player.HP;
+            int enemyHp = battleData.Enemy.HP;
 
             string sendMessage = "";
             if (battleData.actionJudge)
             {
-                sendMessage += GenerateMessage(battleSystem.Player);
-                sendMessage += GenerateMessage(battleSystem.Enemy);
+                sendMessage += GenerateMessage(battleData.Player);
+                sendMessage += GenerateMessage(battleData.Enemy);
             }
             else
             {
-                sendMessage += GenerateMessage(battleSystem.Enemy);
-                sendMessage += GenerateMessage(battleSystem.Player);
+                sendMessage += GenerateMessage(battleData.Enemy);
+                sendMessage += GenerateMessage(battleData.Player);
             }
             return (sendMessage, playerHp, enemyHp);
         }
-        private string GenerateMessage(ICharactor charactor)
+        private string GenerateMessage(ICharacter character)
         {
             string message = "";
             string actor, target;
-            if (charactor is Player)
+            if (character is Player)
             {
                 actor = "Player";
                 target = "Enemy";
@@ -57,9 +57,9 @@ namespace HackathonA
                 actor = "Enemy";
                 target = "Player";
             }
-            int damageValue = charactor.DamageValue;
-            bool counterJudge = charactor.CounterJudge;
-            switch (charactor.ActionType)
+            int damageValue = character.DamageValue;
+            bool counterJudge = character.CounterJudge;
+            switch (character.ActionType)
             {
                 case attacking:
                     message += $"{actor}の攻撃!\n";

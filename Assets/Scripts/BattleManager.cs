@@ -12,8 +12,6 @@ namespace HackathonA
         const int counter = 3;
         const int magicCounter = 4;
         private BattleSystem battleSystem;
-        private Player playerData;
-        private Enemy enemyData;
 
         // Start is called before the first frame update
         void Start()
@@ -25,51 +23,31 @@ namespace HackathonA
          actionText
          ・攻撃時、ダメージのテキストを返す。
              */
-        public void StateUpdate(int action)
+        public (string, int, int) StateUpdate(int action)
         {
-            BattleData battleData = battleSystem.GetBattleData(action);
-            playerData = battleData.player;
-            enemyData = battleData.enemy;
-        }
-        public string GetText()
-        {
+            BattleData battleData = battleSystem.BattleProcess(action);
+
+            int playerHp = battleSystem.Player.HP;
+            int enemyHp = battleSystem.Enemy.HP;
+
             string sendMessage = "";
-            var charactorList = new List<string>();
             if (battleData.actionJudge)
             {
-                sendMessage += GenerateMessage(playerData);
-                sendMessage += GenerateMessage(enemyData);
+                sendMessage += GenerateMessage(battleSystem.Player);
+                sendMessage += GenerateMessage(battleSystem.Enemy);
             }
             else
             {
-                sendMessage += GenerateMessage(enemyData);
-                sendMessage += GenerateMessage(playerData);
+                sendMessage += GenerateMessage(battleSystem.Enemy);
+                sendMessage += GenerateMessage(battleSystem.Player);
             }
-            return sendMessage;
-            
-        }
-        public int GetHp(string charactorName)
-        {
-            int hp;
-            switch (charactorName)
-            {
-                case "Player":
-                    hp = playerData.HP;
-                    break;
-                case "Enemy":
-                    hp = enemyData.HP;
-                    break;
-                default:
-                    hp = -1;
-                    break;
-            }
-            return hp;
+            return (sendMessage, playerHp, enemyHp);
         }
         private string GenerateMessage(ICharactor charactor)
         {
             string message = "";
             string actor, target;
-            if (charactor.GetType() == "Player")
+            if (charactor is Player)
             {
                 actor = "Player";
                 target = "Enemy";
@@ -98,7 +76,6 @@ namespace HackathonA
                     message += $"{actor}のカウンター攻撃!\n";
                     if (counterJudge)
                     {
-
                         message += $"{target}は{damageValue}のダメージを受けた";
                     }
                     else

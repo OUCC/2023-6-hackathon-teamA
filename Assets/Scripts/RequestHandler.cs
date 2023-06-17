@@ -9,9 +9,9 @@ namespace HackathonA
         public bool IsCompleted { get; private set; }
         public bool IsError => Error != null;
         public string Error { get; private set; }
-        public ResponseData Response { get; private set; }
+        public ChatGPTDatas.ResponseData Response { get; private set; }
 
-        UnityWebRequest request;
+        private UnityWebRequest request;
 
         public RequestHandler(UnityWebRequest request)
         {
@@ -30,7 +30,7 @@ namespace HackathonA
                 }
                 else
                 {
-                    Response = JsonConvert.DeserializeObject<ResponseData>(request.downloadHandler.text);
+                    Response = JsonConvert.DeserializeObject<ChatGPTDatas.ResponseData>(request.downloadHandler.text);
                 }
             }
         }

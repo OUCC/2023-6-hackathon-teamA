@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using HackathonA.ChatGPTDatas;
 using UnityEngine;
 
 namespace HackathonA
@@ -86,7 +87,7 @@ Output example: 0";
                 // 文字列を数値に変換
                 try
                 {
-                    int action = Int32.Parse(responseMessage.Substring(0, 1));
+                    int action = int.Parse(responseMessage.Substring(0, 1));
                     // 数値に変換できれば、それをコールバック関数に渡す
                     if (0 <= action && action <= 4)
                     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HackathonA
+namespace HackathonA.ChatGPTDatas
 {
     [Serializable]
     public class RequestData

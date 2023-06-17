@@ -60,15 +60,14 @@ Output example: 0";
 
         public IEnumerator GetEnemyAction(int playerHP, int enemyHP, System.Action<int> callback)
         {
-            var chatGPTConnection = new ChatGPTConnection(_apiKey);
+            var chatGPTConnection = new ChatGPTConnection(_apiKey, API_URL);
 
             string currentMessage = $"Currently, your HP is  {enemyHP} and your opponent's HP is {playerHP}";
             Debug.Log(currentMessage);
             _messages.Add(new Message() { role = "system", content = currentMessage });
 
             var request = chatGPTConnection.CreateCompletionRequest(
-                new RequestData() { messages = _messages },
-                API_URL
+                new RequestData() { messages = _messages }
             );
 
             yield return request.Send();

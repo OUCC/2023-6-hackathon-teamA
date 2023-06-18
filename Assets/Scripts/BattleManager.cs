@@ -33,7 +33,7 @@ namespace HackathonA
             int enemyHp = battleData.Enemy.Hp;
 
             string sendMessage = "";
-            if (battleData.actionJudge)
+            if (battleData.ActionJudge)
             {
                 sendMessage += GenerateMessage(battleData.Player);
                 sendMessage += GenerateMessage(battleData.Enemy);

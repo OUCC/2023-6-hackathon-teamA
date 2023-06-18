@@ -22,14 +22,18 @@ namespace HackathonA
             //ChatGPTからEnemyのActionTypeを取得
             enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp);
 
+            //ダメージ計算とカウンターの成功判定
             (player.DamageValue, enemy.DamageValue, player.CounterJudge, enemy.CounterJudge) = Damage(player.ActionType, enemy.ActionType);
 
-            player.Hp = HpCalculate(player.Hp, player.ActionType, player.DamageValue);
-            enemy.Hp = HpCalculate(enemy.Hp, enemy.ActionType, enemy.DamageValue);
+            //HP計算
+            (player.Hp, enemy.Hp) = HpCalculate(player.Hp, player.ActionType, player.DamageValue, enemy.Hp, enemy.ActionType, enemy.DamageValue);
 
-
+            //バトル終了判定
             int battleJudge = BattleJudge(player.Hp, enemy.Hp);
+
+            //先行判定
             bool moveJudge = ActionJudge(player.CounterJudge);
+
             return new BattleData(battleJudge, moveJudge, player, enemy);
         }
 
@@ -164,53 +168,43 @@ namespace HackathonA
 
 
             //カウンターの処理
-            switch (playerCounterJudge)
+            if (playerCounterJudge)
             {
-                case true:
-                    playerAction = 0;
-                    break;
-
-                case false:
-                    playerDamageValue = enemyDamageValue;
-                    enemyDamageValue = 0;
-                    break;
+                playerDamageValue = enemyDamageValue;
+                enemyDamageValue = 0;
             }
-            switch (enemyCounterJudge)
+            if (enemyCounterJudge)
             {
-                case true:
-                    enemyDamageValue = 0;
-                    break;
-
-                case false:
-                    enemyDamageValue = playerDamageValue;
-                    playerDamageValue = 0;
-                    break;
+                enemyDamageValue = playerDamageValue;
+                playerDamageValue = 0;
             }
             return (playerDamageValue, enemyDamageValue, playerCounterJudge, enemyCounterJudge);
         }
 
         //HP計算
-        private int HpCalculate(int hp, int action, int damageValue)
+        private (int playerHp, int enemyHp) HpCalculate(int playerHp, int playerAction, int playerDamageValue, int enemyHp, int enemyAction, int enemyDamageValue)
         {
-            int _hp = hp;
-            int _damageValue = damageValue;
-
             //回復だけ区別
-            if (action == 2)
+            if ((playerAction == 2) && (enemyAction == 2))
             {
-                _hp = _hp + _damageValue;
+                playerHp += playerDamageValue;
+                enemyHp += enemyDamageValue;
+            }
+            else if (playerAction == 2)
+            {
+                playerHp += playerDamageValue - enemyDamageValue;
+            }
+            else if (enemyAction == 2)
+            {
+                enemyHp += enemyDamageValue - playerDamageValue;
             }
             else
             {
-                _hp = _hp - _damageValue;
+                playerHp -= enemyDamageValue;
+                enemyHp -= playerDamageValue;
             }
 
-            if (_hp <= 0)
-            {
-                _hp = 0;
-            }
-
-            return _hp;
+            return (playerHp, enemyHp);
         }
 
         //勝敗判定（１：player勝利、０：継戦、ー１：enemy勝利）

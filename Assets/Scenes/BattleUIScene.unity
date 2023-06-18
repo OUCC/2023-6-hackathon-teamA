@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   messageText: {fileID: 425722338}
-  enemyHPText: {fileID: 517322044}
-  playerHPText: {fileID: 641428180}
+  enemyHpText: {fileID: 0}
+  playerHpText: {fileID: 0}
   physicalButton: {fileID: 126188194}
   magicButton: {fileID: 540305732}
   recoverButton: {fileID: 2068287648}
@@ -163,6 +163,7 @@ MonoBehaviour:
   enemyImage: {fileID: 1673551403}
   buttonGroup: {fileID: 877563750}
   scrollView: {fileID: 1663905217}
+  battleManagerObject: {fileID: 336515333}
 --- !u!224 &41784759
 RectTransform:
   m_ObjectHideFlags: 0
@@ -449,6 +450,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 336515334}
+  - component: {fileID: 336515335}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -471,6 +473,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &336515335
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 336515333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 451a88d4ad131604eb843749821e7c9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &368047377
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,7 +909,7 @@ GameObject:
   - component: {fileID: 517322045}
   - component: {fileID: 517322044}
   m_Layer: 5
-  m_Name: EnemyHPText (TMP)
+  m_Name: EnemyHpText (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1322,7 +1336,7 @@ GameObject:
   - component: {fileID: 641428181}
   - component: {fileID: 641428180}
   m_Layer: 5
-  m_Name: PlayerHPText (TMP)
+  m_Name: PlayerHpText (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -6,18 +6,20 @@ namespace HackathonA
     public class BattleSystem
     {
         private EnemyAI enemyAI;
+        private Player player;
+        private Enemy enemy;
         public BattleSystem()
         {
             var config = UnityEngine.Resources.Load("ApiKey") as UnityEngine.TextAsset;
             var _apiKey = config.text.Trim();
             enemyAI = new EnemyAI(_apiKey);
+            
+            player = new Player();
+            enemy = new Enemy();
         }
 
         public async UniTask<BattleData> BattleProcessAsync(int playerAction)
         {
-            Player player = new Player();
-            Enemy enemy = new Enemy();
-
             player.ActionType = playerAction;
             //ChatGPTからEnemyのActionTypeを取得
             enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp);

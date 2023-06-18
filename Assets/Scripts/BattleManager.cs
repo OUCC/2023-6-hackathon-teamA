@@ -7,11 +7,11 @@ namespace HackathonA
 {
     public class BattleManager : MonoBehaviour
     {
-        const int attacking = 0;
-        const int magicAttacking = 1;
-        const int healing = 2;
-        const int counter = 3;
-        const int magicCounter = 4;
+        private const int Attacking = 0;
+        private const int MagicAttacking = 1;
+        private const int Healing = 2;
+        private const int Counter = 3;
+        private const int MagicCounter = 4;
         private BattleSystem battleSystem;
 
         // Start is called before the first frame update
@@ -65,18 +65,18 @@ namespace HackathonA
             bool counterJudge = character.CounterJudge;
             switch (character.ActionType)
             {
-                case attacking:
+                case Attacking:
                     message += $"{actor}の攻撃!\n";
                     message += $"{target}は{damageValue}のダメージを受けた";
                     break;
-                case magicAttacking:
+                case MagicAttacking:
                     message += $"{actor}の魔法攻撃!\n";
                     message += $"{target}は{damageValue}のダメージを受けた";
                     break;
-                case healing:
+                case Healing:
                     message += $"{actor}は{damageValue}回復した";
                     break;
-                case counter:
+                case Counter:
                     message += $"{actor}のカウンター攻撃!\n";
                     if (counterJudge)
                     {
@@ -87,7 +87,7 @@ namespace HackathonA
                         message += "しかし失敗に終わった。";
                     }
                     break;
-                case magicCounter:
+                case MagicCounter:
                     message += $"{actor}の魔法カウンター攻撃!\n";
                     if (counterJudge)
                     {

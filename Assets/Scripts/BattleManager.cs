@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace HackathonA
 {
@@ -24,7 +25,7 @@ namespace HackathonA
          引数: プレイヤーの行動
          返り値: (文章・プレイヤーのHP・敵のHP)の順のタプル
              */
-        public async (string, int, int) StateUpdateAsync(int playerAction)
+        public async UniTask<(string, int, int)> StateUpdateAsync(int playerAction)
         {
             BattleData battleData = await battleSystem.BattleProcessAsync(playerAction);
 

@@ -2,7 +2,7 @@ using System;
 
 namespace HackathonA
 {
-    public class Player : ICharactar
+    public class Player : ICharacter
     {
         public Player(int hp = 100, int actionType = 0, int damageValue = 0, bool counterJudge = false)
         {

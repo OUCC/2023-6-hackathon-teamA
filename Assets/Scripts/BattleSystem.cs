@@ -8,21 +8,24 @@ namespace HackathonA
         private EnemyAI enemyAI;
         private Player player;
         private Enemy enemy;
+
         public BattleSystem()
         {
             var config = UnityEngine.Resources.Load("ApiKey") as UnityEngine.TextAsset;
             var _apiKey = config.text.Trim();
             enemyAI = new EnemyAI(_apiKey);
-            
+
             player = new Player();
             enemy = new Enemy();
+            player.ActionType = -1;
         }
 
         public async UniTask<BattleData> BattleProcessAsync(int playerAction)
         {
-            player.ActionType = playerAction;
             //ChatGPTからEnemyのActionTypeを取得
-            enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp);
+            enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp, playerAction);
+
+            player.ActionType = playerAction;
 
             //ダメージ計算とカウンターの成功判定
             (player.DamageValue, enemy.DamageValue, player.CounterJudge, enemy.CounterJudge) = Damage(player.ActionType, enemy.ActionType);

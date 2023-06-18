@@ -8,7 +8,7 @@ namespace HackathonA
         private EnemyAI enemyAI;
         public BattleSystem()
         {
-            var config = Resources.Load("ApiKey") as TextAsset;
+            var config = UnityEngine.Resources.Load("ApiKey") as UnityEngine.TextAsset;
             var _apiKey = config.text.Trim();
             enemyAI = new EnemyAI(_apiKey);
         }

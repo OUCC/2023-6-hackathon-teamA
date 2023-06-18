@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Cysharp.Threading.Tasks;
 using TMPro;
 using UniRx;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace HackathonA
 {
-    public class UIManager : MonoBehaviour
+    public class UIManager : MonoBehaviour, IDisposable
     {
         [SerializeField]
         private TextMeshProUGUI messageText;
@@ -32,98 +34,54 @@ namespace HackathonA
         private HorizontalLayoutGroup buttonGroup;
         [SerializeField]
         private GameObject scrollView;
-        private BattleManagerFake battleManager; 
+        [SerializeField]
+        private GameObject battleManagerObject;
+        private BattleManager battleManager; 
         private CancellationTokenSource cancellationTokenSource = new();
 
         // Start is called before the first frame update
         void Start()
         {
-            battleManager = new ();
-            battleManager.MessageChanged.Subscribe(async messages => {
-                try
-                {
-                    await MessageChangedAsync(messages.Item1, messages.Item2, cancellationTokenSource.Token);
-                }
-                catch (OperationCanceledException)
-                {
-                    cancellationTokenSource.Dispose();
-                    cancellationTokenSource = new();
-                }
-            });
-            battleManager.PlayerHPChanged.Subscribe(playerHP => playerHPText.SetText($"HP：{playerHP}"));
-            battleManager.EnemyHPChanged.Subscribe(enemyHP => enemyHPText.SetText($"HP：{enemyHP}"));
-            physicalButton.onClick.AddListener(() => ButtonCliled(0));
-            magicButton.onClick.AddListener(() => ButtonCliled(1));
-            recoverButton.onClick.AddListener(() => ButtonCliled(2));
-            physicalCounterButton.onClick.AddListener(() => ButtonCliled(3));
-            magicCounterCounterButton.onClick.AddListener(()=>ButtonCliled(4));
+            battleManager = battleManagerObject.GetComponent<BattleManager>();
+            physicalButton.onClick.AddListener(async () => await ButtonCliledAsync(0));
+            magicButton.onClick.AddListener(async () => await ButtonCliledAsync(1));
+            recoverButton.onClick.AddListener(async () => await ButtonCliledAsync(2));
+            physicalCounterButton.onClick.AddListener(async () => await ButtonCliledAsync(3));
+            magicCounterCounterButton.onClick.AddListener(async () => await ButtonCliledAsync(4));
             scrollView.SetActive(false);
         }
 
         private void OnDestroy()
         {
-            cancellationTokenSource.Dispose();
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
         }
 
-        private void ButtonCliled(int playerAction)
+        private async UniTask ButtonCliledAsync(int playerAction)
         {
-            buttonGroup.gameObject.SetActive(false);
-            var message = playerAction switch
+            try
             {
-                0 => "物理攻撃\n物理攻撃\n物理攻撃\n物理攻撃\n",
-                1 => "魔法攻撃",
-                2 => "回復",
-                3 => "物理カウンター",
-                4 => "魔法カウンター",
-                _ => "default",
-            };
-            battleManager.TestInvoke(message);
-        }
-
-        private async UniTask MessageChangedAsync(string message, bool isEndMessage, CancellationToken cancellation)
-        {
-            scrollView.SetActive(true);
-            messageText.SetText(message);
-            if (isEndMessage)
+                buttonGroup.gameObject.SetActive(false);
+                (string message, int playerHP, int enemyHP) = await battleManager.StateUpdateAsync(playerAction);
+                playerHPText.SetText($"HP：{playerHP}");
+                enemyHPText.SetText($"HP：{enemyHP}");
+                scrollView.SetActive(true);
+                messageText.SetText(message);            
+                await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationTokenSource.Token);
+            }
+            finally
             {
-                try
-                {
-                    await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellation);
-                }
-                finally
-                {
-                    scrollView.SetActive(false);
-                    buttonGroup.gameObject.SetActive(true);
-                }
+                scrollView.SetActive(false);
+                buttonGroup.gameObject.SetActive(true);
+                cancellationTokenSource.Dispose();
+                cancellationTokenSource = new();
             }
         }
-    }
-
-    public class BattleManagerFake : IDisposable
-    {
-        private Subject<(string, bool)> messageChanged = new();
-        private Subject<int> playerHPChanged = new();
-        private Subject<int> enemyHPChanged = new();
-        internal IObservable<(string, bool)> MessageChanged { get => messageChanged; }
-        internal IObservable<int> PlayerHPChanged { get => playerHPChanged; }
-        internal IObservable<int> EnemyHPChanged { get => enemyHPChanged; }
-
 
         public void Dispose()
         {
-            messageChanged.Dispose();
-            playerHPChanged.Dispose();
-            enemyHPChanged.Dispose();
-        }
-
-        public void TestInvoke(string message)
-        {
-            if (message == null)
-                return;
-            messageChanged.OnNext((message, true));
-            var rnd = new System.Random();
-            enemyHPChanged.OnNext(rnd.Next(0, 100));
-            playerHPChanged.OnNext(rnd.Next(0, 100));
+            cancellationTokenSource?.Cancel();
+            cancellationTokenSource?.Dispose();
         }
     }
 }

@@ -29,7 +29,7 @@ namespace HackathonA
 
 
             int battleJudge = BattleJudge(player.Hp, enemy.Hp);
-            bool moveJudge = MoveJudge(player.CounterJudge);
+            bool moveJudge = ActionJudge(player.CounterJudge);
             return new BattleData(battleJudge, moveJudge, player, enemy);
         }
 
@@ -236,7 +236,7 @@ namespace HackathonA
         }
 
         //先行判定
-        private bool MoveJudge(bool counterJudge)
+        private bool ActionJudge(bool counterJudge)
         {
             if (counterJudge == true)
             {

@@ -1,17 +1,26 @@
 using System;
+using Cysharp.Threading.Tasks;
 
 namespace HackathonA
 {
     public class BattleSystem
     {
-        public async BattleData BattleProcessAsync(int playerAction)
+        private EnemyAI enemyAI;
+        public BattleSystem()
+        {
+            var config = Resources.Load("ApiKey") as TextAsset;
+            var _apiKey = config.text.Trim();
+            enemyAI = new EnemyAI(_apiKey);
+        }
+
+        public async UniTask<BattleData> BattleProcessAsync(int playerAction)
         {
             Player player = new Player();
             Enemy enemy = new Enemy();
 
             player.ActionType = playerAction;
-            //ChatGPTから取得
-            enemy.ActionType = 0;
+            //ChatGPTからEnemyのActionTypeを取得
+            enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp);
 
             (player.DamageValue, enemy.DamageValue, player.CounterJudge, enemy.CounterJudge) = Damage(player.ActionType, enemy.ActionType);
 

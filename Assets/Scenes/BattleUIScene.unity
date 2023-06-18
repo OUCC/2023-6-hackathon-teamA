@@ -153,8 +153,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   messageText: {fileID: 425722338}
-  enemyHpText: {fileID: 0}
-  playerHpText: {fileID: 0}
+  enemyHpText: {fileID: 517322044}
+  playerHpText: {fileID: 641428180}
   physicalButton: {fileID: 126188194}
   magicButton: {fileID: 540305732}
   recoverButton: {fileID: 2068287648}

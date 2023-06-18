@@ -1,10 +1,11 @@
-﻿using System.Collections;
-using UnityEngine.Networking;
+﻿using UnityEngine.Networking;
 using Newtonsoft.Json;
+using Cysharp.Threading.Tasks;
+using System;
 
 namespace HackathonA
 {
-    public class RequestHandler
+    public class RequestHandler: IDisposable
     {
         public bool IsCompleted { get; private set; }
         public bool IsError => Error != null;
@@ -18,11 +19,11 @@ namespace HackathonA
             this.request = request;
         }
 
-        public IEnumerator Send()
+        public async UniTask Send()
         {
             using (request)
             {
-                yield return request.SendWebRequest();
+                await request.SendWebRequest();
 
                 if (request.result != UnityWebRequest.Result.Success)
                 {
@@ -33,6 +34,11 @@ namespace HackathonA
                     Response = JsonConvert.DeserializeObject<ChatGPTDatas.ResponseData>(request.downloadHandler.text);
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            request?.Dispose();
         }
     }
 }

@@ -1,23 +1,33 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using HackathonA.ChatGPTDatas;
 using UnityEngine;
 
 namespace HackathonA
 {
-    public class EnemyBehaviour : MonoBehaviour
+    public class EnemyBehaviour
     {
-        public int DefaultPhysicalAttack = 20;
-        public int DefaultMagicAttack = 20;
-        public int DefaultRecoveryPoint = 15;
-        public int DefaultActionOnError = 0;
+        public int DefaultPhysicalAttack { get; set; } = 20;
+        public int DefaultMagicAttack { get; set; } = 20;
+        public int DefaultRecoveryPoint { get; set; } = 15;
+        public int DefaultActionOnError { get; set; } = 0;
 
-        const string API_URL = "https://api.openai.com/v1/chat/completions";
-        private string _apiKey;
+        private const string API_URL = "https://api.openai.com/v1/chat/completions";
+        private readonly string _apiKey;
+        private readonly ChatGPTConnection _chatGPTConnection;
 
         // ChatGPTに入力するメッセージのリスト（過去の内容も一緒に渡すためリスト）
         private List<Message> _messages;
+
+        public EnemyBehaviour(string apiKey)
+        {
+            _apiKey = apiKey;
+            _messages = new List<Message>()
+            {
+                new Message(){role = "system", content = GenerateSystemMessage()},
+            };
+            _chatGPTConnection = new ChatGPTConnection(_apiKey, API_URL);
+        }
 
         private string GenerateSystemMessage()
         {
@@ -39,16 +49,6 @@ Input example: Your HP is currently 1000 and your opponent's HP is 1000
 Output example: 0";
         }
 
-        void Awake()
-        {
-            TextAsset config = Resources.Load("ApiKey") as TextAsset;
-            _apiKey = config.text.Trim();
-            _messages = new List<Message>()
-            {
-                new Message(){role = "system", content = GenerateSystemMessage()},
-            };
-        }
-
         // 敵の設定
         public void Set(int physicalAttack, int mamgicAttack, int recoveryPoint)
         {
@@ -58,49 +58,50 @@ Output example: 0";
             };
         }
 
-        public IEnumerator GetEnemyAction(int playerHP, int enemyHP, System.Action<int> callback)
+        /// <summary>
+        /// ChatGPTとの通信を開始
+        /// </summary>
+        /// <param name="playerHP">プレイヤーのHP</param>
+        /// <param name="enemyHP">敵のHP</param>
+        /// <returns>アクションのタイプ(0-4)。エラー時にはDefaultActionOnErrorで設定した値が返ってくる</returns>
+        public async UniTask<int> GetEnemyActionAsync(int playerHP, int enemyHP)
         {
-            var chatGPTConnection = new ChatGPTConnection(_apiKey, API_URL);
-
             string currentMessage = $"Currently, your HP is  {enemyHP} and your opponent's HP is {playerHP}";
-            Debug.Log(currentMessage);
+            DebugLoger.Log(currentMessage);
             _messages.Add(new Message() { role = "system", content = currentMessage });
 
-            var request = chatGPTConnection.CreateCompletionRequest(
-                new RequestData() { messages = _messages }
-            );
+            using var request = _chatGPTConnection.CreateCompletionRequest(new RequestData() { messages = _messages });
 
-            yield return request.Send();
+            await request.Send();
 
             // エラーがあった場合は、それをコンソールに出力
             if (request.IsError)
             {
-                Debug.LogError(request.Error);
-                callback(DefaultActionOnError);
+                DebugLoger.LogError(request.Error);
+                return DefaultActionOnError;
             }
             else
             {
                 var responseMessage = request.Response.choices[0].message.content;
-                Debug.Log($"ChatGPT replied '{responseMessage}'");
+                DebugLoger.Log($"ChatGPT replied '{responseMessage}'");
 
                 // 文字列を数値に変換
-                try
+                if (int.TryParse(responseMessage[..1], out var action)) 
                 {
-                    int action = int.Parse(responseMessage.Substring(0, 1));
-                    // 数値に変換できれば、それをコールバック関数に渡す
                     if (0 <= action && action <= 4)
                     {
-                        callback(action);
+                        return action;
                     }
                     else
                     {
-                        callback(DefaultActionOnError);
+                        return DefaultActionOnError;
                     }
                 }
-                catch (FormatException)
+                else
                 {
-                    Debug.LogError($"Unable to parse '{responseMessage}'");
-                    callback(DefaultActionOnError);
+
+                    DebugLoger.LogError($"Unable to parse '{responseMessage}'");
+                    return DefaultActionOnError;
                 }
             }
         }

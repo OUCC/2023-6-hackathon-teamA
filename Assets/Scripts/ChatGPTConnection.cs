@@ -5,7 +5,7 @@ namespace HackathonA
 {
     public class ChatGPTConnection
     {
-        private JsonSerializerSettings settings = new();
+        private readonly JsonSerializerSettings settings = new();
         private readonly string apiKey;
         private readonly string apiUrl;
 

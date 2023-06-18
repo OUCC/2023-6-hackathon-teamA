@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using HackathonA.ChatGPTDatas;
-using UnityEngine;
 
 namespace HackathonA
 {
-    public class EnemyBehaviour
+    public class EnemyAI
     {
         public int DefaultPhysicalAttack { get; set; } = 20;
         public int DefaultMagicAttack { get; set; } = 20;
@@ -19,7 +18,7 @@ namespace HackathonA
         // ChatGPTに入力するメッセージのリスト（過去の内容も一緒に渡すためリスト）
         private List<Message> _messages;
 
-        public EnemyBehaviour(string apiKey)
+        public EnemyAI(string apiKey)
         {
             _apiKey = apiKey;
             _messages = new List<Message>()
@@ -66,9 +65,9 @@ Output example: 0";
         /// <returns>アクションのタイプ(0-4)。エラー時にはDefaultActionOnErrorで設定した値が返ってくる</returns>
         public async UniTask<int> GetEnemyActionAsync(int playerHP, int enemyHP)
         {
-            string currentMessage = $"Currently, your HP is  {enemyHP} and your opponent's HP is {playerHP}";
+            string currentMessage = $"Currently, your HP is  {enemyHP} and your opponent's HP is {playerHP}.\nChoose from the options above and respond with the corresponding number.";
             DebugLoger.Log(currentMessage);
-            _messages.Add(new Message() { role = "system", content = currentMessage });
+            _messages.Add(new Message() { role = "user", content = currentMessage });
 
             using var request = _chatGPTConnection.CreateCompletionRequest(new RequestData() { messages = _messages });
 

@@ -11,7 +11,7 @@ namespace HackathonA
         {
             var config = Resources.Load("ApiKey") as TextAsset;
             var _apiKey = config.text.Trim();
-            var enemyBehaviour = new EnemyBehaviour(_apiKey);
+            var enemyBehaviour = new EnemyAI(_apiKey);
             DebugLoger.Log($"Enemy Action: {await enemyBehaviour.GetEnemyActionAsync(PlayerHP, EnemyHP)}");
         }
     }

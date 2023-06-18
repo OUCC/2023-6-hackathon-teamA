@@ -2,7 +2,7 @@ using System;
 
 namespace HackathonA
 {
-    interface ICharactar
+    interface ICharacter
     {
         int Hp { get; set; }
         int ActionType { get; set; }

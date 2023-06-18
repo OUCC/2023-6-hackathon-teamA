@@ -19,7 +19,7 @@ namespace HackathonA
             this.request = request;
         }
 
-        public async UniTask Send()
+        public async UniTask SendAsync()
         {
             using (request)
             {

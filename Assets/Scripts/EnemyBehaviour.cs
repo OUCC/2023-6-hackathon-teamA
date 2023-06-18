@@ -72,7 +72,7 @@ Output example: 0";
 
             using var request = _chatGPTConnection.CreateCompletionRequest(new RequestData() { messages = _messages });
 
-            await request.Send();
+            await request.SendAsync();
 
             // エラーがあった場合は、それをコンソールに出力
             if (request.IsError)

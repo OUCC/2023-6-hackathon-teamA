@@ -59,11 +59,22 @@ namespace HackathonA
             try
             {
                 buttonGroup.gameObject.SetActive(false);
-                (string message, int playerHP, int enemyHP) = await battleManager.StateUpdateAsync(playerAction);
+                (string playerMessage, string enemyMessage, int playerHP, int enemyHP, bool actionJudge) = await battleManager.StateUpdateAsync(playerAction);
                 playerHPText.SetText($"HP：{playerHP}");
                 enemyHPText.SetText($"HP：{enemyHP}");
                 scrollView.SetActive(true);
-                messageText.SetText(message);            
+                if (actionJudge)
+                {
+                    messageText.SetText(playerMessage);
+                    await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: cancellationTokenSource.Token);
+                    messageText.SetText(enemyMessage);
+                }
+                else
+                {
+                    messageText.SetText(enemyMessage);
+                    await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: cancellationTokenSource.Token);
+                    messageText.SetText(playerMessage);
+                }           
                 await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationTokenSource.Token);
             }
             finally

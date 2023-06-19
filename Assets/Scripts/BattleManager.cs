@@ -25,27 +25,19 @@ namespace HackathonA
          引数: プレイヤーの行動
          返り値: (文章・プレイヤーのHP・敵のHP)の順のタプル
              */
-        public async UniTask<(string, int, int)> StateUpdateAsync(int playerAction)
+        public async UniTask<(string, string, int, int, bool)> StateUpdateAsync(int playerAction)
         {
             BattleData battleData = await battleSystem.BattleProcessAsync(playerAction);
 
             int playerHp = battleData.Player.Hp;
             int enemyHp = battleData.Enemy.Hp;
 
-            string sendMessage = "";
-            if (battleData.ActionJudge)
-            {
-                sendMessage += GenerateMessage(battleData.Player);
-                sendMessage += "\n";
-                sendMessage += GenerateMessage(battleData.Enemy);
-            }
-            else
-            {
-                sendMessage += GenerateMessage(battleData.Enemy);
-                sendMessage += "\n";
-                sendMessage += GenerateMessage(battleData.Player);
-            }
-            return (sendMessage, playerHp, enemyHp);
+            string playerSendMessage, enemySendMessage;
+            
+            playerSendMessage = GenerateMessage(battleData.Player);
+            enemySendMessage = GenerateMessage(battleData.Enemy);
+            
+            return (playerSendMessage, enemySendMessage, playerHp, enemyHp, battleData.ActionJudge);
         }
         private string GenerateMessage(ICharacter character)
         {

@@ -23,15 +23,23 @@ namespace HackathonA
         {
             using (request)
             {
-                await request.SendWebRequest();
+                try
+                {
 
-                if (request.result != UnityWebRequest.Result.Success)
-                {
-                    Error = "[ChatGPTConnection] " + request.error + "\n\n" + request.downloadHandler.text;
+                    await request.SendWebRequest();
+
+                    if (request.result != UnityWebRequest.Result.Success)
+                    {
+                        Error = "[ChatGPTConnection] " + request.error + "\n\n" + request.downloadHandler.text;
+                    }
+                    else
+                    {
+                        Response = JsonConvert.DeserializeObject<ChatGPTDatas.ResponseData>(request.downloadHandler.text);
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
-                    Response = JsonConvert.DeserializeObject<ChatGPTDatas.ResponseData>(request.downloadHandler.text);
+                    Error = ex.ToString();
                 }
             }
         }

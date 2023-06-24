@@ -59,12 +59,26 @@ namespace HackathonA
             switch (character.ActionType)
             {
                 case Attacking:
-                    message += $"{actor}の攻撃!\n";
-                    message += $"{target}は{damageValue}のダメージを受けた";
+                    message += $"{actor}の物理攻撃!\n";
+                    if (damageValue == 0)
+                    {
+                        message += $"しかし{target}はカウンターをした！";
+                    }
+                    else
+                    {
+                        message += $"{target}は{damageValue}のダメージを受けた";
+                    }
                     break;
                 case MagicAttacking:
                     message += $"{actor}の魔法攻撃!\n";
-                    message += $"{target}は{damageValue}のダメージを受けた";
+                    if (damageValue == 0)
+                    {
+                        message += $"しかし{target}はカウンターをした！";
+                    }
+                    else
+                    {
+                        message += $"{target}は{damageValue}のダメージを受けた";
+                    }
                     break;
                 case Healing:
                     message += $"{actor}は{damageValue}回復した";

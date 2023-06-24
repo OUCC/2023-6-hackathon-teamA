@@ -12,9 +12,9 @@ namespace HackathonA
         [SerializeField]
         private TextMeshProUGUI messageText;
         [SerializeField]
-        private TextMeshProUGUI enemyHPText;
+        private TextMeshProUGUI enemyHpText;
         [SerializeField]
-        private TextMeshProUGUI playerHPText;
+        private TextMeshProUGUI playerHpText;
         [SerializeField]
         private Button physicalButton;
         [SerializeField]
@@ -60,8 +60,8 @@ namespace HackathonA
             {
                 buttonGroup.gameObject.SetActive(false);
                 (string playerMessage, string enemyMessage, int playerHP, int enemyHP, bool actionJudge) = await battleManager.StateUpdateAsync(playerAction);
-                playerHPText.SetText($"HP：{playerHP}");
-                enemyHPText.SetText($"HP：{enemyHP}");
+                playerHpText.SetText($"HP：{playerHP}");
+                enemyHpText.SetText($"HP：{enemyHP}");
                 scrollView.SetActive(true);
                 if (actionJudge)
                 {

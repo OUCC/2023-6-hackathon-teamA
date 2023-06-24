@@ -4,10 +4,12 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using System.Collections;
 
 namespace HackathonA
 {
-    public class UIManager : MonoBehaviour, IDisposable
+    public class BattleUIManager : MonoBehaviour
     {
         [SerializeField]
         private TextMeshProUGUI messageText;
@@ -36,7 +38,6 @@ namespace HackathonA
         [SerializeField]
         private GameObject battleManagerObject;
         private BattleManager battleManager; 
-        private CancellationTokenSource cancellationTokenSource = new();
 
         // Start is called before the first frame update
         void Start()
@@ -50,19 +51,16 @@ namespace HackathonA
             messageTextBackground.gameObject.SetActive(false);
         }
 
-        private void OnDestroy()
-        {
-            cancellationTokenSource?.Cancel();
-            cancellationTokenSource?.Dispose();
-        }
-
         private async UniTask ButtonCliledAsync(int playerAction)
         {
+            int battleJudge = 0;
+            var ct = this.GetCancellationTokenOnDestroy();
             try
             {
                 buttonGroup.gameObject.SetActive(false);
                 backButtonGroup.gameObject.SetActive(false);
-                (string playerMessage, string enemyMessage, int playerHP, int enemyHP, bool actionJudge) = await battleManager.StateUpdateAsync(playerAction);
+                (string playerMessage, string enemyMessage, int playerHP, int enemyHP, bool actionJudge, int battleJudge1) = await battleManager.StateUpdateAsync(playerAction);
+                battleJudge = battleJudge1;
                 playerHpText.SetText($"HP：{playerHP}");
                 enemyHpText.SetText($"HP：{enemyHP}");
                 messageTextBackground.gameObject.SetActive(true);
@@ -70,30 +68,46 @@ namespace HackathonA
                 if (actionJudge)
                 {
                     messageText.SetText(playerMessage);
-                    await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: cancellationTokenSource.Token);
+                    await UniTask.Delay(TimeSpan.FromSeconds(4), cancellationToken: ct);
                     messageText.SetText(enemyMessage);
                 }
                 else
                 {
                     messageText.SetText(enemyMessage);
-                    await UniTask.Delay(TimeSpan.FromSeconds(3), cancellationToken: cancellationTokenSource.Token);
+                    await UniTask.Delay(TimeSpan.FromSeconds(4), cancellationToken: ct);
                     messageText.SetText(playerMessage);
-                }           
-                await UniTask.Delay(TimeSpan.FromSeconds(5), cancellationToken: cancellationTokenSource.Token);
+                }
+                if (battleJudge == 0)
+                {
+                    await UniTask.Delay(TimeSpan.FromSeconds(4), cancellationToken: ct);
+                }
+                else
+                {
+                    PlayerPrefs.SetInt("result", battleJudge);
+                    PlayerPrefs.Save();
+                    await SceanLoadCoroutine(LoadSceneMode.Single, 4.0f).ToUniTask();
+                }
             }
             finally
             {
-                messageTextBackground.gameObject.SetActive(false);
-                buttonGroup.gameObject.SetActive(true);
-                cancellationTokenSource.Dispose();
-                cancellationTokenSource = new();
+                if (battleJudge == 0)
+                {
+                    messageTextBackground.gameObject.SetActive(false);
+                    buttonGroup.gameObject.SetActive(true);
+                }
             }
         }
 
-        public void Dispose()
+        internal IEnumerator SceanLoadCoroutine(LoadSceneMode sceneMode, float i_waitTime)
         {
-            cancellationTokenSource?.Cancel();
-            cancellationTokenSource?.Dispose();
+            var ao = SceneManager.LoadSceneAsync("ResultScene", sceneMode);
+            if (i_waitTime > 0.0f)
+            {
+                ao.allowSceneActivation = false;
+                yield return new WaitForSeconds(i_waitTime);
+                ao.allowSceneActivation = true;
+            }
+            yield return ao;
         }
     }
 }

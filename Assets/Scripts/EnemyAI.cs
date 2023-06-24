@@ -66,7 +66,7 @@ Your opponent did the {playerAction switch
                     3 => "physical counter",
                     4 => "magic counter",
                     _ => throw new ArgumentOutOfRangeException()
-                }}before.
+                }} before.
 Choose from the options above and respond with the corresponding number.
 Also, your response have to be only figure. You can not respond anything other than figure.";
             }

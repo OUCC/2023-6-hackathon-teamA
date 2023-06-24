@@ -36,14 +36,14 @@ namespace HackathonA
 
             (playerHp, enemyHp) = HpCalculate(playerHp, player.ActionType, player.DamageValue, enemyHp, enemy.ActionType, enemy.DamageValue);
             
-            player.Hp = playerHp;
+            enemy.Hp = enemyHp;
 
             if(playerHp==0&&enemyHp==0)
             {
-                enemyHp = enemy.Hp;
+                playerHp = player.Hp;
             }
 
-            enemy.Hp = enemyHp;
+            player.Hp = playerHp;
 
             //バトル終了判定
             int battleJudge = BattleJudge(player.Hp, enemy.Hp);

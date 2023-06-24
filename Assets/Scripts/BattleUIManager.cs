@@ -69,7 +69,10 @@ namespace HackathonA
                 {
                     messageText.SetText(playerMessage);
                     await UniTask.Delay(TimeSpan.FromSeconds(4), cancellationToken: ct);
-                    messageText.SetText(enemyMessage);
+                    if (battleJudge != 1)
+                    {
+                        messageText.SetText(enemyMessage);
+                    }
                 }
                 else
                 {

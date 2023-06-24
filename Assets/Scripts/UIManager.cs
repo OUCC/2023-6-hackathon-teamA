@@ -30,7 +30,9 @@ namespace HackathonA
         [SerializeField]
         private HorizontalLayoutGroup buttonGroup;
         [SerializeField]
-        private GameObject scrollView;
+        private Image backButtonGroup;
+        [SerializeField]
+        private Image messageTextBackground;
         [SerializeField]
         private GameObject battleManagerObject;
         private BattleManager battleManager; 
@@ -45,7 +47,7 @@ namespace HackathonA
             recoverButton.onClick.AddListener(async () => await ButtonCliledAsync(2));
             physicalCounterButton.onClick.AddListener(async () => await ButtonCliledAsync(3));
             magicCounterCounterButton.onClick.AddListener(async () => await ButtonCliledAsync(4));
-            scrollView.SetActive(false);
+            messageTextBackground.gameObject.SetActive(false);
         }
 
         private void OnDestroy()
@@ -59,10 +61,12 @@ namespace HackathonA
             try
             {
                 buttonGroup.gameObject.SetActive(false);
+                backButtonGroup.gameObject.SetActive(false);
                 (string playerMessage, string enemyMessage, int playerHP, int enemyHP, bool actionJudge) = await battleManager.StateUpdateAsync(playerAction);
                 playerHpText.SetText($"HP：{playerHP}");
                 enemyHpText.SetText($"HP：{enemyHP}");
-                scrollView.SetActive(true);
+                messageTextBackground.gameObject.SetActive(true);
+                backButtonGroup.gameObject.SetActive(true);
                 if (actionJudge)
                 {
                     messageText.SetText(playerMessage);
@@ -79,7 +83,7 @@ namespace HackathonA
             }
             finally
             {
-                scrollView.SetActive(false);
+                messageTextBackground.gameObject.SetActive(false);
                 buttonGroup.gameObject.SetActive(true);
                 cancellationTokenSource.Dispose();
                 cancellationTokenSource = new();

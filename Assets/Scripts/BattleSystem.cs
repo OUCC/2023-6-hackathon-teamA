@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using Cysharp.Threading.Tasks;
 
 namespace HackathonA
@@ -23,7 +23,7 @@ namespace HackathonA
         public async UniTask<BattleData> BattleProcessAsync(int playerAction)
         {
             //ChatGPTからEnemyのActionTypeを取得
-            enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp, playerAction);
+            enemy.ActionType = await enemyAI.GetEnemyActionAsync(player.Hp, enemy.Hp, player.ActionType);
 
             player.ActionType = playerAction;
 
@@ -207,6 +207,16 @@ namespace HackathonA
             {
                 playerHp -= enemyDamageValue;
                 enemyHp -= playerDamageValue;
+            }
+
+            // 0以下になったときに0にする
+            if(playerHp < 0)
+            {
+                playerHp = 0;
+            }
+            if(enemyHp < 0)
+            {
+                enemyHp = 0;
             }
 
             return (playerHp, enemyHp);

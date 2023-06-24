@@ -20,12 +20,12 @@ namespace HackathonA
             battleSystem = new BattleSystem();
         }
 
-        /*
-         StateUpdateAsync
-         引数: プレイヤーの行動
-         返り値: (文章・プレイヤーのHP・敵のHP)の順のタプル
-             */
-        public async UniTask<(string, string, int, int, bool)> StateUpdateAsync(int playerAction)
+        /// <summary>
+        /// プレイヤーの選択を受け取って、戦闘結果を返す
+        /// </summary>
+        /// <param name="playerAction">プレイヤーの行動</param>
+        /// <returns> (文章・プレイヤーのHP・敵のHP・カウンター判定・勝敗判定)の順のタプル</returns>
+        public async UniTask<(string, string, int, int, bool, int)> StateUpdateAsync(int playerAction)
         {
             BattleData battleData = await battleSystem.BattleProcessAsync(playerAction);
 
@@ -33,12 +33,13 @@ namespace HackathonA
             int enemyHp = battleData.Enemy.Hp;
 
             string playerSendMessage, enemySendMessage;
-            
+
             playerSendMessage = GenerateMessage(battleData.Player);
             enemySendMessage = GenerateMessage(battleData.Enemy);
-            
-            return (playerSendMessage, enemySendMessage, playerHp, enemyHp, battleData.ActionJudge);
+
+            return (playerSendMessage, enemySendMessage, playerHp, enemyHp, battleData.ActionJudge, battleData.BattleJudge);
         }
+
         private string GenerateMessage(ICharacter character)
         {
             string message = "";
